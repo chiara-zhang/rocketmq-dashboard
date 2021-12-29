@@ -102,6 +102,9 @@
         <commons-pool2.version>2.4.3</commons-pool2.version>
         <easyexcel.version>2.2.10</easyexcel.version>
         <asm.version>4.2</asm.version>
+        <graphql-spring-boot-starter.version>2.0</graphql-spring-boot-starter.version>
+        <graphiql-spring-boot-starter.version>5.0.2</graphiql-spring-boot-starter.version>
+        <graphql-maven-plugin.version>1.18.1</graphql-maven-plugin.version>
     </properties>
 
     <dependencies>
@@ -125,6 +128,11 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <version>${spring.boot.version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+            <version>${spring.boot.version}</version>
         </dependency>
         <dependency>
             <groupId>commons-collections</groupId>
@@ -246,7 +254,23 @@
             <artifactId>asm</artifactId>
             <version>${asm.version}</version>
         </dependency>
-
+        <!-- graphQL -->
+        <dependency>
+            <groupId>com.graphql-java</groupId>
+            <artifactId>graphql-java-spring-boot-starter-webmvc</artifactId>
+            <version>${graphql-spring-boot-starter.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.graphql-java</groupId>
+            <artifactId>graphiql-spring-boot-starter</artifactId>
+            <version>${graphiql-spring-boot-starter.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.graphql-java-generator</groupId>
+            <artifactId>graphql-java-server-dependencies</artifactId>
+            <version>${graphql-maven-plugin.version}</version>
+            <type>pom</type>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -440,6 +464,36 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.graphql-java-generator</groupId>
+                <artifactId>graphql-maven-plugin</artifactId>
+                <version>${graphql-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generatePojo</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <mode>server</mode>
+                    <packageName>org.apache.rocketmq.dashboard.controller.graphql.codegen</packageName>
+                    <customScalars>
+                        <customScalar>
+                            <graphQLTypeName>Long</graphQLTypeName>
+                            <javaType>java.lang.Long</javaType>
+                            <graphQLScalarTypeStaticField>graphql.Scalars.GraphQLLong</graphQLScalarTypeStaticField>
+                        </customScalar>
+                    </customScalars>
+                    <schemaFileFolder>src/main/resources/graphql</schemaFileFolder>
+                    <copyRuntimeSources>false</copyRuntimeSources>
+                    <targetSourceFolder>src/main/java</targetSourceFolder>
+                    <templates>
+                        <ENUM>src/main/resources/templates/enumObjectType.vm.java</ENUM>
+                        <OBJECT>src/main/resources/templates/objectType.vm.java</OBJECT>
+                    </templates>
+                </configuration>
             </plugin>
         </plugins>
     </build>

@@ -17,7 +17,6 @@
 
 package org.apache.rocketmq.dashboard.filter;
 
-import java.io.IOException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -26,9 +25,10 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 
-@WebFilter(urlPatterns = "/*", filterName = "httpBasicAuthorizedFilter")
+@WebFilter(urlPatterns = "/*", filterName = "httpBasicAuthorizedFilter", asyncSupported = true)
 public class HttpBasicAuthorizedFilter implements Filter {
     
     @Override

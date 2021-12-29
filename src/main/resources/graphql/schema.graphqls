@@ -1,0 +1,81 @@
+directive @length(limit: Int!) on FIELD_DEFINITION | FIELD
+directive @find(key: [String]!) on FIELD_DEFINITION | FIELD
+scalar Long
+
+type Query {
+    clusters(name: String): [Cluster]
+    broker(name: String): Broker
+    topic(name: String): [Topic]
+}
+
+type Cluster {
+    name: String,
+    brokers: [String]
+}
+
+type Broker {
+    name(name: String): String,
+    clusterName: String,
+    nodes: [BrokerNode]
+}
+
+type BrokerNode {
+    address: String,
+    type: BrokerType,
+    summary: BrokerNodeSummary,
+    status: [Property],
+    config: [Property]
+}
+
+enum BrokerType {
+    MASTER
+    SLAVE
+}
+
+type BrokerNodeSummary {
+    version: String,
+    produceMessageTPS: Float,
+    consumerMessageTPS: Float,
+    yesterdayProduceCnt: Int,
+    yesterdayConsumerCnt: Int,
+    todayProduceCnt: Int,
+    todayConsumerCnt: Int
+}
+
+type Property {
+    key: String,
+    value: String
+}
+
+type Topic {
+    name: String,
+    messageQueues: TopicMessageQueue,
+}
+
+type TopicMessageQueue {
+    topic: String,
+    brokers: [Broker],
+    queueStatus: [QueueStatus],
+    queueRoute: [QueueRoute],
+    consumers: [String]
+}
+
+type Consumer {
+    name: String,
+}
+
+type QueueRoute {
+    brokerName: String,
+    readQueueNums: Int,
+    writeQueueNums: Int,
+    perm: Int,
+    topicSysFlag: Int
+}
+
+type QueueStatus {
+    brokerName: String,
+    queueId: Int,
+    minOffset: Long,
+    maxOffset: Long,
+    lastUpdateTimeStamp: Long
+}
